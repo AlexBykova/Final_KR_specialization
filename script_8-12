@@ -1,0 +1,208 @@
+CREATE DATABASE IF NOT EXISTS Animals;
+USE Animals;
+
+CREATE TABLE IF NOT EXISTS friends (
+id INT primary key auto_increment,
+category varchar(50)
+);
+
+CREATE TABLE IF NOT EXISTS pets (
+id INT primary key auto_increment,
+species varchar(50),
+category_id INT,
+FOREIGN KEY (category_id) REFERENCES friends (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS pack_animals (
+id INT primary key auto_increment,
+species varchar(50),
+category_id INT,
+FOREIGN KEY (category_id) REFERENCES friends (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cats (
+id INT primary key auto_increment,
+breed varchar(50),
+name_animal varchar(50),
+command varchar (200),
+birthday DATE,
+species_id INT,
+FOREIGN KEY (species_id) REFERENCES pets (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS dogs (
+id INT primary key auto_increment,
+breed varchar(50),
+name_animal varchar(50),
+command varchar (200),
+birthday DATE,
+species_id INT,
+FOREIGN KEY (species_id) REFERENCES pets (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS hamsters (
+id INT primary key auto_increment,
+breed varchar(50),
+name_animal varchar(50),
+command varchar (200),
+birthday DATE,
+species_id INT,
+FOREIGN KEY (species_id) REFERENCES pets (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS horses (
+id INT primary key auto_increment,
+breed varchar(50),
+name_animal varchar(50),
+command varchar (200),
+birthday DATE,
+species_id INT,
+FOREIGN KEY (species_id) REFERENCES pack_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS camels (
+id INT primary key auto_increment,
+breed varchar(50),
+name_animal varchar(50),
+command varchar (200),
+birthday DATE,
+species_id INT,
+FOREIGN KEY (species_id) REFERENCES pack_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS donkeys (
+id INT primary key auto_increment,
+breed varchar(50),
+name_animal varchar(50),
+command varchar (200),
+birthday DATE,
+species_id INT,
+FOREIGN KEY (species_id) REFERENCES pack_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+INSERT friends (category) 
+VALUES
+('Pets'),
+('Pack_animals');
+
+INSERT pets (species, category_id) 
+VALUES
+('Cats', 1),
+('Dods', 1),
+('Hamsters', 1);
+
+INSERT pack_animals (species, category_id) 
+VALUES
+('Horses', 2),
+('Camels', 2),
+('Donkeys', 2);
+
+INSERT cats (breed, name_animal, command, birthday, species_id) 
+VALUES
+('Мейн-кун', 'Василий', '-', '2022-12-11', 1),
+('Бенгальский кот', 'Буся', 'Сидеть', '2017-05-01', 1),
+('Ориентальный кот', 'Амир', 'Неси', '2024-02-15', 1);
+
+INSERT dogs (breed, name_animal, command, birthday, species_id) 
+VALUES
+('Сиба-ину', 'Ливси', 'сидеть, лежать, голос, место', '2018-07-11', 2),
+('Доберман', 'Ральф', 'сидель, лежать, охранять, рядом', '2021-09-13', 2),
+('Хаски', 'Адам', 'сидеть, лежать, лапу', '2020-11-28', 2);
+
+INSERT hamsters (breed, name_animal, command, birthday, species_id) 
+VALUES
+('Лемминг', 'Феофан', '-', '2022-01-14', 3),
+('Хомяк обыкновенный', 'Герасим', '-', '2019-07-18', 3),
+('Кузнечиковый хомяк', 'Петр', '-', '2023-10-30', 3);
+
+INSERT horses (breed, name_animal, command, birthday, species_id) 
+VALUES
+('Орловский рысак', 'Мавр', 'вперед, стой, хоп, рысь, тише', '2016-01-10', 1),
+('Арабская лошадь', 'Альбина', 'вперед, стой, рысь, тише', '2020-12-31', 1),
+('Ахалтекинская лошадь', 'Звёздочка', 'вперед, стой', '2021-04-04', 1);
+
+INSERT camels (breed, name_animal, command, birthday, species_id) 
+VALUES
+('Дромадер', 'Абдул', 'гит, дурр, каш, хап-хап', '2019-10-10', 2),
+('Арабиан', 'Хика', 'гит, хап-хап, дурр', '2015-02-15', 2),
+('Бактриан', 'Газам', 'гит, дурр, каш', '2023-04-28', 2);
+
+INSERT donkeys (breed, name_animal, command, birthday, species_id) 
+VALUES
+('Пиренейский осёл', 'Кузьмич', '-', '2024-01-12', 3),
+('Каталонский осёл', 'Вгуся', 'иди, стой', '2018-11-19', 3),
+('Марыйский осёл', 'Лидочкаanimals', 'иди, стой, бег', '2020-10-06', 3);
+
+TRUNCATE camels;
+
+INSERT INTO horses (breed, name_animal, command, birthday, species_id)
+SELECT breed, name_animal, command, birthday, species_id
+FROM donkeys;
+
+DROP TABLE donkeys;
+
+RENAME TABLE horses TO horses_and_donkeys;
+
+CREATE TABLE young_animal (
+	id INT primary key auto_increment,
+    breed varchar(50),
+	name_animal varchar(50),
+    birthday DATE,
+    age varchar(50)
+);
+
+INSERT INTO young_animal (breed, name_animal, birthday, age) 
+      SELECT breed, name_animal, birthday, 
+      datediff(curdate(),birthday) DIV 31 as age
+      from cats 
+      WHERE date_add(birthday, INTERVAL 1 YEAR) < curdate() 
+            AND date_add(birthday, INTERVAL 3 YEAR) > curdate();
+            
+INSERT INTO young_animal (breed, name_animal, birthday, age) 
+      SELECT breed, name_animal, birthday,
+      datediff(curdate(),birthday) DIV 31 as age
+      from dogs 
+      WHERE date_add(birthday, INTERVAL 1 YEAR) < curdate() 
+            AND date_add(birthday, INTERVAL 3 YEAR) > curdate();
+
+INSERT INTO young_animal (breed, name_animal, birthday, age) 
+      SELECT breed, name_animal, birthday, 
+      datediff(curdate(),birthday) DIV 31 as age
+      from hamsters 
+      WHERE date_add(birthday, INTERVAL 1 YEAR) < curdate() 
+            AND date_add(birthday, INTERVAL 3 YEAR) > curdate();
+
+INSERT INTO young_animal (breed, name_animal, birthday, age) 
+      SELECT breed, name_animal, birthday, 
+      datediff(curdate(),birthday) DIV 31 as age
+      from horses_and_donkeys 
+      WHERE date_add(birthday, INTERVAL 1 YEAR) < curdate() 
+            AND date_add(birthday, INTERVAL 3 YEAR) > curdate();
+            
+CREATE TABLE animals (
+	id INT primary key auto_increment,
+	breed varchar(50),
+	name_animal varchar(50),
+	command varchar (200),
+	birthday DATE,
+	species_id INT,
+    animal_type ENUM('cat','dog','hamster', 'horses_and_donkeys') NOT NULL
+);
+
+INSERT INTO animals (name_animal, breed, command, birthday, species_id, animal_type)
+SELECT name_animal, breed, command, birthday, species_id, 'cat'
+FROM cats;
+
+INSERT INTO animals (name_animal, breed, command, birthday, species_id, animal_type)
+SELECT name_animal, breed, command, birthday, species_id, 'dog'
+FROM dogs;
+
+INSERT INTO animals (name_animal, breed, command, birthday, species_id, animal_type)
+SELECT name_animal, breed, command, birthday, species_id, 'hamster'
+FROM hamsters;
+
+INSERT INTO animals (name_animal, breed, command, birthday, species_id, animal_type)
+SELECT name_animal, breed, command, birthday, species_id, 'horses_and_donkeys'
+FROM horses_and_donkeys;
